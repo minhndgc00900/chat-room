@@ -8,15 +8,14 @@ const AuthProvider = (props) => {
 
     const login = async () => {
         const user = await loginWithGoogle();
+        console.log(222, user);
         if (!user) {
             // TODO: Handle failed login
         }
         setUser(user);
     };
 
-    const value = { user, login };
-
-    return <AuthContext.Provider value={value} {...props} />;
+    return <AuthContext.Provider value={{ user, login }} {...props} />;
 }
 
 export { AuthProvider, AuthContext }
