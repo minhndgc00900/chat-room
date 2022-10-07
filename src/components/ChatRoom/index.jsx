@@ -1,8 +1,8 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { chatRooms } from "../../data/chatRoom";
-import './styles.css';
-
+import { MessageInput } from "../MessageInput";
+import "./styles.css";
 
 const ChatRoom = () => {
   const params = useParams();
@@ -18,7 +18,9 @@ const ChatRoom = () => {
       <div>
         <Link to="/">⬅️ Back to all rooms</Link>
       </div>
-      <div className="messages-container">{/* TODO */}</div>
+      <div className="messages-container">
+        <MessageInput roomId={room.id} />
+      </div>
     </>
   );
 };

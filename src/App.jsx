@@ -10,7 +10,7 @@ const App = () => {
   const accessToken = localStorage.getItem("accessToken");
 
   useEffect(() => {
-    if (user || accessToken) {
+    if (user || !!accessToken) {
       setIsAuthenticated(true);
     }
   }, [accessToken, user])

@@ -1,5 +1,9 @@
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 
+import {
+    addDoc, collection, getFirestore, serverTimestamp,
+} from 'firebase/firestore';
+
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -19,6 +23,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 async function loginWithGoogle() {
     try {
@@ -26,8 +31,12 @@ async function loginWithGoogle() {
         const auth = getAuth(app);
 
         const { user } = await signInWithPopup(auth, provider);
-        console.log(22, user);
-        return { uid: user.uid, displayName: user.displayName };
+        return {
+            uid: user?.uid,
+            displayName: user?.displayName,
+            email: user?.email,
+            accessToken: user?.accessToken,
+        };
     } catch (error) {
         if (error.code !== 'auth/cancelled-popup-request') {
             console.error(error);
@@ -36,4 +45,17 @@ async function loginWithGoogle() {
     }
 }
 
-export { loginWithGoogle };
+async function sendMessage(roomId, user, text) {
+    try {
+        await addDoc(collection(db, 'chat-rooms', roomId, 'messages'), {
+            uid: user.uid,
+            displayName: user.name,
+            text: text.trim(),
+            timestamp: serverTimestamp(),
+        });
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export { loginWithGoogle, sendMessage };
