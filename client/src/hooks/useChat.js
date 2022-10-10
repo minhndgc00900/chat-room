@@ -1,6 +1,6 @@
 
-import { useEffect, useRef, useState } from "react";
-import socketIOClient from "socket.io-client";
+import { useEffect, useMemo, useRef, useState } from "react";
+import io from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage"; // Name of the event
@@ -8,35 +8,32 @@ const SOCKET_SERVER_URL = "http://localhost:4000";
 
 const useChat = roomId => {
     const [messages, setMessages] = useState([]);
-    const socketRef = useRef();
+    const socketClientRef = useRef();
 
     useEffect(() => {
-        // Creates a WebSocket connection
-        socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
-            query: { roomId },
-        });
-
-        socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-            const incomingMessage = {
-                ...message,
-                ownedByCurrentUser: message.senderId === socketRef.current.id,
-                uuid: uuidv4(),
-            };
-
-            setMessages(messages => [...messages, incomingMessage]);
-        })
+            // Creates a WebSocket connection
+            socketClientRef.current = io(SOCKET_SERVER_URL, {
+                query: { roomId },
+            });
+            socketClientRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
+                const incomingMessage = {
+                    ...message,
+                    ownedByCurrentUser: message.senderId === socketClientRef.current.id,
+                    uuid: uuidv4(),
+                };
+                setMessages(messages => [...messages, incomingMessage]);
+            })
 
         return () => {
-            socketRef.current.disconnect();
+            socketClientRef.current.disconnect();
         }
     }, [roomId])
 
     const sendMessage = messageBody => {
         if (messageBody) {
-            console.log(2222);
-            socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, {
+            socketClientRef.current.emit(NEW_CHAT_MESSAGE_EVENT, {
                 body: messageBody,
-                senderId: socketRef.current.id,
+                senderId: socketClientRef.current.id,
             })
         }
     }

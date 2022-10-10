@@ -1,10 +1,7 @@
 import React, { useState } from "react";
-import useChat from "../../hooks/useChat";
 import "./styles.css";
 
-const MessageInput = ({ roomId }) => {
-//   const { user } = useAuth();
-  const { sendMessage } = useChat(roomId);
+const MessageInput = ({ sendMessage }) => {
   const [value, setValue] = useState("");
 
   const handleChange = (event) => {
@@ -13,8 +10,6 @@ const MessageInput = ({ roomId }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // sendMessage(roomId, user, value);
-    // setValue("");
     sendMessage(value);
     setValue("");
   };

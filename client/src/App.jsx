@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { AuthenticatedApp } from "./components/AuthenticatedApp";
 import { UnauthenticatedApp } from "./components/UnauthenticatedApp";
 import { useAuth } from "./hooks/useAuth";
+import { AuthenticatedApp } from "./pages/AuthenticatedApp";
 
 const App = () => {
   const { user, login } = useAuth();

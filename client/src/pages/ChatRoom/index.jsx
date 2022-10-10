@@ -1,17 +1,21 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { chatRooms } from "../../data/chatRoom";
-import { MessageInput } from "../MessageInput";
-import MessageList from "../MessageList";
+import useChat from "../../hooks/useChat";
+import { MessageInput } from "../../components/MessageInput";
+import MessageList from "../../components/MessageList";
 import "./styles.css";
 
 const ChatRoom = () => {
   const params = useParams();
 
   const room = chatRooms.find((x) => x.id === params.id);
+
   if (!room) {
     // TODO: 404
   }
+
+  const { messages, sendMessage } = useChat(room.id);
 
   return (
     <>
@@ -20,8 +24,8 @@ const ChatRoom = () => {
         <Link to="/">⬅️ Back to all rooms</Link>
       </div>
       <div className="messages-container">
-        <MessageList roomId={room.id} />
-        <MessageInput roomId={room.id} />
+        <MessageList messages={messages} />
+        <MessageInput sendMessage={sendMessage} />
       </div>
     </>
   );
